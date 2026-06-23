@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📖 القرآن الكريم - تطبيق شامل</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>📖</text></svg>">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Tahoma', 'Arial', sans-serif;
+  background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+  min-height: 100vh;
+  padding: 15px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+  color: white;
+  padding: 25px 20px;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 32px;
+  margin-bottom: 5px;
+}
+
+.header p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.content {
+  padding: 20px;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+#search {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  border: 2px solid #4caf50;
+  border-radius: 10px;
+  background: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+#search:focus {
+  outline: none;
+  border-color: #2e7d32;
+  background: white;
+  box-shadow: 0 0 8px rgba(46, 125, 50, 0.2);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background: #2e7d32;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1b5e20;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+}
+
+.btn-secondary {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 2px solid #4caf50;
+}
+
+.btn-secondary:hover {
+  background: #c8e6c9;
+}
+
+#box {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.back-btn {
+  background: #2e7d32;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: #1b5e20;
+  transform: translateY(-2px);
+}
+
+.surah {
+  padding: 15px 16px;
+  margin: 8px 0;
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  border-left: 4px solid #4caf50;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.surah:hover {
+  background: linear-gradient(135deg, #c8e6c9 0%, #dcedc8 100%);
+  transform: translateX(-8px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.surah-number {
+  background: #4caf50;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.ayah {
+  padding: 15px;
+  margin: 12px 0;
+  background: #fafafa;
+  border-radius: 8px;
+  font-size: 20px;
+  line-height: 2.5;
+  text-align: justify;
+  border-right: 4px solid #4caf50;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ayah:hover {
+  background: #f1f8e9;
+}
+
+.ayah-num {
+  color: #2e7d32;
+  font-weight: bold;
+  background: #e8f5e9;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.tafseer {
+  padding: 12px;
+  margin-top: 10px;
+  background: #fff9c4;
+  border-radius: 6px;
+  font-size: 16px;
+  line-height: 2;
+  color: #333;
+  display: none;
+}
+
+.tafseer.show {
+  display: block;
+}
+
+.surah-title {
+  text-align: center;
+  color: #1b5e20;
+  font-size: 24px;
+  margin: 20px 0 10px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #4caf50;
+}
+
+.surah-info {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.tab-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #4caf50;
+  background: white;
+  color: #2e7d32;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+  background: #2e7d32;
+  color: white;
+}
+
+.admin-panel {
+  display: none;
+  background: #fff3cd;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+.admin-panel.show {
+  display: block;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ffc107;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.admin-btn {
+  background: #ff9800;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.admin-btn:hover {
+  background: #f57c00;
+}
+
+.spinner {
+  text-align: center;
+  padding: 20px;
+  color: #2e7d32;
+}
+
+@media (max-width: 600px) {
+  .container {
+    border-radius: 10px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .ayah {
+    font-size: 18px;
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .tab-controls {
+    flex-direction: column;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4caf50;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2e7d32;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>📖 القرآن الكريم</h1>
+    <p>تطبيق شامل - بحث + تفسير + بدون إنترنت</p>
+  </div>
+
+  <div class="content">
+    <div class="search-container">
+      <input id="search" type="text" placeholder="ابحث عن سورة أو كلمة...">
+    </div>
+
+    <div class="tab-controls">
+      <button class="tab-btn active" onclick="showTab('surahs')">السور</button>
+      <button class="tab-btn" onclick="showTab('admin')">⚙️ إعدادات</button>
+    </div>
+
+    <div id="box"></div>
+
+    <div id="adminPanel" class="admin-panel">
+      <h3>🔐 لوحة الإدارة</h3>
+      <input type="password" class="admin-input" id="adminPassword" placeholder="أدخل كلمة السر">
+      <button class="admin-btn" onclick="loginAdmin()">دخول الإدارة</button>
+      <div id="adminContent" style="display: none; margin-top: 15px;">
+        <h4>تصحيح التفسير:</h4>
+        <input type="text" class="admin-input" id="surahSelect" placeholder="رقم السورة">
+        <input type="text" class="admin-input" id="ayahSelect" placeholder="رقم الآية">
+        <textarea class="admin-input" id="newTafseer" placeholder="التفسير الجديد" style="height: 100px; resize: vertical;"></textarea>
+        <button class="admin-btn" onclick="saveTafseer()">حفظ التصحيح</button>
+        <button class="admin-btn" onclick="logoutAdmin()">تسجيل الخروج</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// إعدادات الإدارة
+const ADMIN_PASSWORD = "1234"; // غيّر كلمة السر الحقيقية
+let isAdminLoggedIn = false;
+let data = [];
+let corrections = {};
+
+// تحميل البيانات المحلية عند الدخول
+document.addEventListener('DOMContentLoaded', function() {
+  loadFromLocalStorage();
+  fetchData();
+});
+
+// جلب بيانات القرآن
+function fetchData() {
+  fetch('quran.json')
+    .then(r => r.json())
+    .then(d => {
+      data = d;
+      // تطبيق التصحيحات المحفوظة
+      applyCorrections();
+      showSurahs();
+    })
+    .catch(e => {
+      console.error('خطأ في تحميل البيانات:', e);
+      document.getElementById('box').innerHTML = '<div class="spinner">❌ خطأ في تحميل البيانات</div>';
+    });
+}
+
+// حفظ في التخزين المحلي
+function saveToLocalStorage() {
+  localStorage.setItem('quran_corrections', JSON.stringify(corrections));
+}
+
+// تحميل من التخزين المحلي
+function loadFromLocalStorage() {
+  const saved = localStorage.getItem('quran_corrections');
+  if (saved) {
+    corrections = JSON.parse(saved);
+  }
+}
+
+// تطبيق التصحيحات
+function applyCorrections() {
+  for (let key in corrections) {
+    const [surahId, ayahNum] = key.split('-');
+    const surah = data.find(s => s.id == surahId);
+    if (surah) {
+      const ayah = surah.ayahs.find(a => a.num == ayahNum);
+      if (ayah) {
+        ayah.tafseer = corrections[key];
+      }
+    }
+  }
+}
+
+// عرض قائمة السور
+function showSurahs() {
+  const box = document.getElementById('box');
+  box.innerHTML = '';
+  data.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'surah';
+    div.innerHTML = `
+      <span>${s.id}. ${s.name}</span>
+      <span class="surah-number">${s.ayahsCount}</span>
+    `;
+    div.onclick = () => openSurah(s);
+    box.appendChild(div);
+  });
+}
+
+// فتح السورة
+function openSurah(s) {
+  const box = document.getElementById('box');
+  box.innerHTML = `
+    <button class="back-btn" onclick="showSurahs()">← رجوع إلى السور</button>
+    <div class="surah-title">سورة ${s.name}</div>
+    <div class="surah-info">عدد الآيات: ${s.ayahsCount}</div>
+    <div id="ayahsList"></div>
+  `;
+
+  const ayahsList = document.getElementById('ayahsList');
+  s.ayahs.forEach(a => {
+    const ayahDiv = document.createElement('div');
+    const ayahId = `ayah-${s.id}-${a.num}`;
+    const tafseeId = `tafseer-${s.id}-${a.num}`;
+    
+    ayahDiv.innerHTML = `
+      <div class="ayah" onclick="toggleTafseer('${tafseeId}')">
+        ${a.text}
+        <span class="ayah-num">[${a.num}]</span>
+      </div>
+      <div id="${tafseeId}" class="tafseer">
+        <strong>التفسير:</strong><br>
+        ${a.tafseer}
+      </div>
+    `;
+    ayahsList.appendChild(ayahDiv);
+  });
+}
+
+// تبديل عرض التفسير
+function toggleTafseer(id) {
+  const element = document.getElementById(id);
+  element.classList.toggle('show');
+}
+
+// عرض/إخفاء التبويبات
+function showTab(tab) {
+  if (tab === 'surahs') {
+    document.getElementById('adminPanel').classList.remove('show');
+    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    document.querySelectorAll('.tab-btn')[1].classList.remove('active');
+    showSurahs();
+  } else if (tab === 'admin') {
+    document.getElementById('adminPanel').classList.add('show');
+    document.querySelectorAll('.tab-btn')[0].classList.remove('active');
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+  }
+}
+
+// دخول الإدارة
+function loginAdmin() {
+  const password = document.getElementById('adminPassword').value;
+  if (password === ADMIN_PASSWORD) {
+    isAdminLoggedIn = true;
+    document.getElementById('adminContent').style.display = 'block';
+    document.getElementById('adminPassword').style.display = 'none';
+    document.querySelectorAll('.admin-btn')[0].style.display = 'none';
+  } else {
+    alert('❌ كلمة السر غير صحيحة!');
+  }
+}
+
+// تسجيل الخروج من الإدارة
+function logoutAdmin() {
+  isAdminLoggedIn = false;
+  document.getElementById('adminContent').style.display = 'none';
+  document.getElementById('adminPassword').style.display = 'block';
+  document.getElementById('adminPassword').value = '';
+  document.querySelectorAll('.admin-btn')[0].style.display = 'block';
+}
+
+// حفظ التصحيح
+function saveTafseer() {
+  if (!isAdminLoggedIn) {
+    alert('❌ يجب تسجيل الدخول أولاً!');
+    return;
+  }
+
+  const surahId = parseInt(document.getElementById('surahSelect').value);
+  const ayahNum = parseInt(document.getElementById('ayahSelect').value);
+  const newTafseer = document.getElementById('newTafseer').value;
+
+  if (!surahId || !ayahNum || !newTafseer) {
+    alert('⚠️ يجب ملء جميع الحقول!');
+    return;
+  }
+
+  const surah = data.find(s => s.id === surahId);
+  if (!surah) {
+    alert('❌ السورة غير موجودة!');
+    return;
+  }
+
+  const ayah = surah.ayahs.find(a => a.num === ayahNum);
+  if (!ayah) {
+    alert('❌ الآية غير موجودة!');
+    return;
+  }
+
+  // حفظ التصحيح
+  const key = `${surahId}-${ayahNum}`;
+  corrections[key] = newTafseer;
+  ayah.tafseer = newTafseer;
+
+  // حفظ في التخزين المحلي
+  saveToLocalStorage();
+
+  alert('✅ تم حفظ التصحيح بنجاح!');
+  document.getElementById('surahSelect').value = '';
+  document.getElementById('ayahSelect').value = '';
+  document.getElementById('newTafseer').value = '';
+}
+
+// البحث
+document.getElementById('search').oninput = function(e) {
+  const term = e.target.value.trim();
+  
+  if (term.length < 2) {
+    showSurahs();
+    return;
+  }
+
+  const box = document.getElementById('box');
+  box.innerHTML = '';
+
+  // البحث في أسماء السور
+  const foundSurahs = data.filter(s => 
+    s.name.includes(term) || s.id.toString().includes(term)
+  );
+
+  if (foundSurahs.length === 0) {
+    box.innerHTML = '<div class="spinner">❌ لم تجد نتائج!</div>';
+    return;
+  }
+
+  foundSurahs.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'surah';
+    div.innerHTML = `
+      <span>${s.id}. ${s.name}</span>
+      <span class="surah-number">${s.ayahsCount}</span>
+    `;
+    div.onclick = () => openSurah(s);
+    box.appendChild(div);
+  });
+};
+</script>
+</body>
+</html>
